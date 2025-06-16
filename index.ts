@@ -9,7 +9,7 @@ import cors from 'cors';
 dotenv.config();
 const server = express();
 server.use(cors({
-  origin: 'http://localhost:5173', // 👈 thêm đúng frontend origin
+  origin: ['http://localhost:5173', 'https://bidaweb.vercel.app'], // cả local & production
   credentials: true, // nếu dùng cookie hoặc auth header
 }));
 import productTransactionRoutes from '@backend/routes/productTransactionRoutes';
