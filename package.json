@@ -4,7 +4,9 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon --require tsconfig-paths/register index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.ts",    
+    "start:cron": "node dist/run.ts"
   },
   "keywords": [],
   "author": "",
