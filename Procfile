@@ -1,2 +1,2 @@
-web: ts-node index.ts
-worker: ts-node run.ts
+web: ts-node --require tsconfig-paths/register index.ts
+worker:ts-node --require tsconfig-paths/register run.ts
