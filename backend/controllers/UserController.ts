@@ -184,6 +184,7 @@ class UserController {
                 JWT_SECRET, {
                 expiresIn: '1h',
             });
+            await redisClient.set(`user:${payload.id}`, newAccessToken);
             res.status(201).json({ accessToken: newAccessToken });
         }catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
