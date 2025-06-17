@@ -5,6 +5,7 @@ import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
 import { JWT_SECRET,REFRESH_TOKEN_SECRET, ROLE_CUSTOMER, STATUS_ACTIVE } from '../BidaConst';
 import { addDay } from '../Format';
+import redisClient from '@backend/redisClient';
 const refreshTokens: Record<string, number> = {}; // Bộ nhớ tạm (thay bằng DB trong thực tế)
 class UserController {
     public static async createCustomer(req: Request, res: Response): Promise<void> {
@@ -140,12 +141,18 @@ class UserController {
                 res.status(401).json({ message: 'Mật khẩu không chính xác' });
                 return;
             }
-        
+            
             const accessToken = jwt.sign(
                 { id: user.id, roleId: user.roleId },
                 JWT_SECRET,
                 { expiresIn: '1h' } // Access token hết hạn sau 45 phút
             );
+            const existingToken = await redisClient.get(`user:${user.id}`);
+            if (existingToken) {
+                res.status(403).json({ message: 'Tài khoản đang được sử dụng ở nơi khác' });
+                return;
+            }
+            await redisClient.set(`user:${user.id}`, accessToken);
             const refreshToken = jwt.sign(
                 { id: user.id,roleId: user.roleId },
                 REFRESH_TOKEN_SECRET,
@@ -187,12 +194,14 @@ class UserController {
         }
         
     }
-    public static async logout(req: Request, res: Response){
-        const { refreshToken } = req.body;
-        if (refreshToken && refreshTokens[refreshToken]) {
-            delete refreshTokens[refreshToken]; // Xóa refresh token khỏi bộ nhớ
+    public static async logout(req: Request, res: Response): Promise<void> {
+        const userId = req.user?.id;
+        if (!userId) {
+            res.status(400).json({ message: 'Không thể lấy ID người dùng' });
+            return;
         }
-        return res.status(200).json({ message: 'Đăng xuất thành công' });
+        await redisClient.del(`user:${userId}`);
+        res.status(200).json({ message: 'Đăng xuất thành công' });
     }
     // Lấy thông tin người dùng theo ID
     public static async getUserById(req: Request, res: Response): Promise<void> {

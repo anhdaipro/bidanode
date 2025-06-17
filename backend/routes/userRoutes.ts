@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import UserController from '@backend/controllers/UserController';
+import { authenticateJWT } from '@backend/middleware';
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.get('/customer/search', UserController.searchCustomer);
 router.get('/user/:id', UserController.getUserById);
 
 // // Cập nhật thông tin người dùng
-// router.put('/users/:id', UserController.updateUser);
+router.post('/logout', authenticateJWT, UserController.logout);
 
 // // Xóa người dùng
 // router.delete('/users/:id', UserController.deleteUser);

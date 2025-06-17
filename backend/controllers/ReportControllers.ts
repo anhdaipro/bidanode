@@ -245,7 +245,6 @@ class ReportController {
             const sevenDaysAgo = today.subtract(7, 'day');
             const seventDaysAgoStr = sevenDaysAgo.format('YYYY-MM-DD')
             const sevenDaysAgoBigint = dayjs(seventDaysAgoStr).unix(); 
-            console.log(todayBigint)
             const dateCol = fn('DATE', col('paid_at')); // Hoặc 'paidAt' nếu model mapping đúng
             const countInvoice = await Payment.count({
                 where:{

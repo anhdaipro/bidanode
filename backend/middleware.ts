@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload,TokenExpiredError } from 'jsonwebtoken';
 import User from './models/User';
+import redisClient from './redisClient';
 declare global {
     namespace Express {
       interface Request {
@@ -21,6 +22,11 @@ export const  authenticateJWT = async (
   }
   try {
         const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+        const savedToken = await redisClient.get(`user:${decoded.id}`);
+        if (savedToken != token) {
+          res.status(401).json({ message: 'Token không hợp lệ khác với token đã lưu' });
+          return;
+        }
         const user = await User.findByPk(decoded.id)
         if (!user) {
             throw new Error()
