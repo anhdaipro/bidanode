@@ -1,4 +1,5 @@
-import JobDay from "./jobs/JobDay";
+
+import JobDay from '@backend/cron/jobs/JobDay';
 import cron from 'node-cron';
 cron.schedule(
     '* * * * *', // Chạy mỗi phút
