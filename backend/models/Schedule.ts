@@ -134,8 +134,8 @@ class Schedule extends Model {
       console.error('Error in cronGenerateWeeklySchedule:', error);
     } 
   }
-  public async cronCalSalary(today: string = dayjs().format('YYYY-MM-DD')){
-    const t = await sequelize.transaction();
+  public async cronCalSalary(today: string = dayjs().format('YYYY-MM-DD')): Promise<void>{
+    const t = await sequelize?.transaction();
     const targetDate = dayjs().subtract(1, 'week').startOf('day');
     const strDate = targetDate.format('YYYY-MM-DD');
     const startOfLastWeek = dayjs(today).subtract(1, 'week').startOf('isoWeek');
@@ -212,9 +212,8 @@ class Schedule extends Model {
       });
     }
   }
-  public async updateStatusAndSalary(today: string = dayjs().format('YYYY-MM-DD')) {
+  public async updateStatusAndSalary(today: string = dayjs().format('YYYY-MM-DD')): Promise<void>{
     try{
-      const t = await sequelize.transaction();
       const targetDate = dayjs().subtract(1, 'day');
       const strDate = targetDate.format('YYYY-MM-DD');
       const startOfLastWeek = dayjs(today).subtract(1, 'week').startOf('isoWeek');
@@ -344,17 +343,17 @@ class Schedule extends Model {
       if (updatedSchedules.length) {
         await Schedule.bulkCreate(updatedSchedules, {
           updateOnDuplicate: ['status', 'updatedAt',],
-          transaction: t,
+          
         });
       }
       if(aUpdateTimeSheet.length >0){
         await TimeSheet.bulkCreate(aUpdateTimeSheet, {
           updateOnDuplicate: ['updatedAt','lateMinutes', 'earlyMinutes', 'actualHours'],
-          transaction: t,
+          
         });
       }
       if( aInsertProblem.length) {
-        await EmployeeProblem.bulkCreate(aInsertProblem,{transaction: t,});
+        await EmployeeProblem.bulkCreate(aInsertProblem,{});
       }
       // const finalGroupedSalaries = Array.from(groupedSalaryRecords.values());
       // // 💰 Thêm nhiều bản ghi lương
@@ -362,7 +361,6 @@ class Schedule extends Model {
       // if (finalGroupedSalaries.length) {
       //   await Payroll.bulkCreate(finalGroupedSalaries,{transaction: t,});
       // }
-      await t?.commit()
     }catch(error) {
       console.error('Error in updateStatusAndSalary:', error);
     }

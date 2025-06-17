@@ -4,7 +4,7 @@ import JobBase from './JobBase';
 export default class JobDay extends JobBase {
   async run(): Promise<void> {
     const mSchedule = new Schedule
-    // mSchedule.cronGenerateWeeklySchedule()
+    mSchedule.cronGenerateWeeklySchedule()
     mSchedule.updateStatusAndSalary()
   }
 }

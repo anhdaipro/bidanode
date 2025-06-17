@@ -12,5 +12,13 @@ const sequelize = new Sequelize('bida', 'avnadmin', password, {
     typeCast: true
   },
 });
-
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Connected!');
+  } catch (err) {
+    console.error('❌ Connection error:', err);
+    console.log('Connecting to host:', host);
+  }
+})();
 export default sequelize;

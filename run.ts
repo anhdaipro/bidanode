@@ -1,4 +1,5 @@
-
+import dotenv from 'dotenv';
+dotenv.config();
 import JobDay from '@backend/cron/jobs/JobDay';
 import cron from 'node-cron';
 cron.schedule(
