@@ -134,8 +134,7 @@ class Schedule extends Model {
       console.error('Error in cronGenerateWeeklySchedule:', error);
     } 
   }
-  public async cronCalSalary(today: string = dayjs().format('YYYY-MM-DD')): Promise<void>{
-    const t = await sequelize?.transaction();
+  public async cronCalSalary(today: string = dayjs().format('YYYY-MM-DD')){
     const targetDate = dayjs().subtract(1, 'week').startOf('day');
     const strDate = targetDate.format('YYYY-MM-DD');
     const startOfLastWeek = dayjs(today).subtract(1, 'week').startOf('isoWeek');
@@ -208,11 +207,11 @@ class Schedule extends Model {
     }
     if(salaryRecords.length >0){
       await Payroll.bulkCreate(salaryRecords, {
-        transaction: t,
+       
       });
     }
   }
-  public async updateStatusAndSalary(today: string = dayjs().format('YYYY-MM-DD')): Promise<void>{
+  public async updateStatusAndSalary(today: string = dayjs().format('YYYY-MM-DD')) {
     try{
       const targetDate = dayjs().subtract(1, 'day');
       const strDate = targetDate.format('YYYY-MM-DD');
@@ -361,6 +360,7 @@ class Schedule extends Model {
       // if (finalGroupedSalaries.length) {
       //   await Payroll.bulkCreate(finalGroupedSalaries,{transaction: t,});
       // }
+      
     }catch(error) {
       console.error('Error in updateStatusAndSalary:', error);
     }
