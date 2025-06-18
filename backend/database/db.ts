@@ -10,7 +10,6 @@ const sequelize = new Sequelize('bida', 'avnadmin', password, {
   dialectOptions: {
     dateStrings: true,
     typeCast: true,
-    ssl: true
   },
 });
 (async () => {
