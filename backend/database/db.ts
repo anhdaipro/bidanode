@@ -9,7 +9,8 @@ const sequelize = new Sequelize('bida', 'avnadmin', password, {
   timezone: '+07:00', // múi giờ VN
   dialectOptions: {
     dateStrings: true,
-    typeCast: true
+    typeCast: true,
+    ssl: true
   },
 });
 (async () => {

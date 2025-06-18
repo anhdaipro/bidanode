@@ -18,8 +18,18 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Wait for MySQL
+        run: |
+          echo "Waiting for MySQL to be ready..."
+          sleep 15
+
       - name: Install dependencies
         run: npm install
 
       - name: Run script
+        env:
+          DB_HOST: mysql-156dd2ec-daip6690-896b.b.aivencloud.com
+          DB_USER: avnadmin
+          DB_PASS: AVNS_exd4hOEO2RJihoXspsp
+          DB_NAME: bida
         run: npx ts-node --require tsconfig-paths/register run.ts
