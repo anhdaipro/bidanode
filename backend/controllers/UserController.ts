@@ -168,17 +168,11 @@ class UserController {
     public static async refreshToken(req: Request, res: Response): Promise<void> {
         try{
             const { refreshToken } = req.body;
-
             if (!refreshToken) {
                 res.status(403).json({ message: 'Refresh token không hợp lệ' });
             }
             const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) as { id: number;roleId:number };
             // Tạo access token mới
-            // const newAccessToken = jwt.sign(
-            //     { id: userId },
-            //     JWT_SECRET,
-            //     { expiresIn: '10h' } // Access token mới hết hạn sau 15 phút
-            // );
             const newAccessToken = jwt.sign({ 
                 id: payload.id,roleId:payload.roleId }, 
                 JWT_SECRET, {
@@ -187,13 +181,21 @@ class UserController {
             await redisClient.set(`user:${payload.id}`, newAccessToken);
             res.status(201).json({ accessToken: newAccessToken });
         }catch (error) {
+            // ✅ Nếu lỗi do token hết hạn → decode thủ công để xoá Redis
+            try {
+                const decoded = jwt.decode(req.body.refreshToken) as { id?: number };
+                if (decoded?.id) {
+                    await redisClient.del(`user:${decoded.id}`);
+                }
+            } catch (decodeError) {
+                // Nếu token quá hỏng thì bỏ qua
+            }
             const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-            res.status(500).json({
-                message: 'Error creating shift',
+            res.status(401).json({
+                message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
                 error: errorMessage,
             });
         }
-        
     }
     public static async logout(req: Request, res: Response): Promise<void> {
         const userId = req.user?.id;
