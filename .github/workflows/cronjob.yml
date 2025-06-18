@@ -2,7 +2,7 @@ name: Run Cron Job
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # 10:00 PM giờ Việt Nam (GMT+7 == UTC+7)
+    - cron: '0 * * * *'  # Every hour (UTC)
   workflow_dispatch:        # Cho phép chạy thủ công nếu muốn
 
 jobs:
